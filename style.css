@@ -1,0 +1,49 @@
+:root {
+  --link-color: #000000;
+  --link-hover: #0000ff;
+  --link-visited: #5a3d99;
+  --link-focus-ring: 3px rgba(0, 102, 204, 0.2);
+}
+
+/* Style de base pour tous les liens */
+a {
+  font-family: "sans-serif", sans-serif;
+  font-size: 5vh;
+  color: var(--link-color);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: color 0.18s ease, background-size 0.2s ease;
+}
+
+a:hover {
+  color: var(--link-hover);
+  background-size: 100% 2px;
+}
+
+/* Etats */
+/* Etats — désactiver toutes les décorations sur les liens */
+a,
+a:link,
+a:visited,
+a:active,
+a:focus,
+a:focus-visible {
+  text-decoration: none !important;
+  background-image: none !important;
+  background-size: 0 !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  transform: none !important;
+}
+
+/* Respecter les préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+  a {
+    transition: none !important;
+  }
+}

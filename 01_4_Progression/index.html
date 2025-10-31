@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Progression - 6 parties</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+  
+
+    <div class="progress-fixed" aria-hidden="true">
+      <div class="progress-frame">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Part 1 — 0%</div>
+    </div>
+
+    <main>
+      <section class="section" data-title="Partie 1" data-scale="1">
+        <h1>Partie 1</h1>
+        <p>Contenu de la partie 1 — scrollez pour voir la progression.</p>
+      </section>
+
+      <section class="section" data-title="Partie 2" data-scale="0.8">
+        <h1>Partie 2</h1>
+        <p>Contenu de la partie 2</p>
+      </section>
+
+      <section class="section" data-title="Partie 3" data-scale="1.2">
+        <h1>Partie 3</h1>
+        <p>Contenu de la partie 3</p>
+      </section>
+
+      <section class="section" data-title="Partie 4" data-scale="1">
+        <h1>Partie 4</h1>
+        <p>Contenu de la partie 4</p>
+      </section>
+
+      <section class="section" data-title="Partie 5" data-scale="0.5">
+        <h1>Partie 5</h1>
+        <p>Contenu de la partie 5</p>
+      </section>
+
+      <section class="section" data-title="Partie 6" data-scale="1">
+        <h1>Partie 6</h1>
+        <p>Contenu de la partie 6</p>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const sections = Array.from(document.querySelectorAll('.section'));
+        const bar = document.getElementById('progressBar');
+        const label = document.getElementById('progressLabel');
+
+        function clamp(v, a = 0, b = 1) { return Math.max(a, Math.min(b, v)); }
+
+        function update() {
+          const center = window.innerHeight / 2;
+          // Trouver la section qui contient le centre de la fenêtre
+          let active = sections.find(s => {
+            const r = s.getBoundingClientRect();
+            return r.top <= center && r.bottom >= center;
+          });
+          if (!active) {
+            // fallback : choisir la plus proche du centre
+            let best = null; let bestDist = Infinity;
+            sections.forEach(s => {
+              const r = s.getBoundingClientRect();
+              const secCenter = r.top + r.height / 2;
+              const dist = Math.abs(secCenter - center);
+              if (dist < bestDist) { bestDist = dist; best = s; }
+            });
+            active = best || sections[0];
+          }
+
+          const rect = active.getBoundingClientRect();
+          // Calculer progression basée sur la position du centre dans la section
+          const progress = clamp((center - rect.top) / rect.height, 0, 1);
+          const scale = parseFloat(active.dataset.scale || '1');
+          let value = progress * scale;
+          if (value > 1) value = 1;
+          const pct = Math.round(value * 100);
+
+          bar.style.width = pct + '%';
+          label.textContent = `${active.dataset.title || ''} — ${pct}%`;
+        }
+
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        document.addEventListener('DOMContentLoaded', update);
+        // aussi appel initial si le script est chargé après le DOM
+        update();
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Révélation d'images au scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: rgb(255, 255, 255);
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(0, 0, 0);
+            font-size: 3em;
+            margin-bottom: 80px;
+        }
+
+        .image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            background: #fff;
+            margin-bottom: 120px;
+            opacity: 0;
+            transform: translateY(80px) scale(0.9);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .image-wrapper.reveal {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .image-wrapper img {
+            width: 800px;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            transform: scale(1.15);
+            transition: transform 1s ease;
+        }
+
+        .image-wrapper.reveal img {
+            transform: scale(1);
+        }
+
+        .image-caption {
+            padding: 30px;
+            background: white;
+            text-align: justify;
+            font-size: 1.5em;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .spacer {
+            height: 150px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+                margin-bottom: 50px;
+            }
+            
+            .image-wrapper {
+                margin-bottom: 80px;
+            }
+
+            .image-wrapper img {
+                height: 400px;
+            }
+
+            .image-caption {
+                font-size: 1.2em;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>L'inconscient inculqué à mon ordinateur</h1>
+        
+        <div class="spacer"></div>
+        
+        <div class="image-wrapper">
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 2.jpg" alt="Montagne au coucher du soleil">
+            <div class="image-caption">Lia ⚆</div>
+        </div>
+        
+        <div class="image-wrapper">
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 3.jpg" alt="Plage tropicale">
+            <div class="image-caption">Lia ⚆</div>
+        </div>
+        
+        <div class="image-wrapper">
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 4.jpg" alt="Forêt mystérieuse">
+            <div class="image-caption">Mr.P ⚉</div>
+        </div>
+
+        <div class="image-wrapper">
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 5.jpg" alt="Lac paisible">
+            <div class="image-caption">Hugo ⚈</div>
+        </div>
+        
+        <div class="image-wrapper">
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie.jpg" alt="Sentier forestier">
+            <div class="image-caption">Hugo ⚈</div>
+        </div>
+        
+        <div class="image-wrapper">
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1.jpg" alt="Brume matinale">
+            <div class="image-caption">Lia ⚆</div>
+        </div>
+
+        <div class="spacer"></div>
+    </div>
+
+    <script>
+        // Fonction pour vérifier si un élément est visible dans le viewport
+        function isInViewport(element) {
+            const rect = element.getBoundingClientRect();
+            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+            
+            // L'élément est visible s'il est dans une zone spécifique de l'écran
+            return (
+                rect.top < windowHeight * 0.75 &&
+                rect.bottom > windowHeight * 0.25
+            );
+        }
+
+        // Fonction pour révéler/cacher les images
+        function revealImages() {
+            const images = document.querySelectorAll('.image-wrapper');
+            
+            images.forEach((img) => {
+                if (isInViewport(img)) {
+                    img.classList.add('reveal');
+                } else {
+                    img.classList.remove('reveal');
+                }
+            });
+        }
+
+        // Écouter l'événement de scroll avec un petit délai pour optimiser
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            if (scrollTimeout) {
+                window.cancelAnimationFrame(scrollTimeout);
+            }
+            scrollTimeout = window.requestAnimationFrame(revealImages);
+        });
+
+        // Révéler les images au chargement de la page
+        window.addEventListener('load', function() {
+            revealImages();
+        });
+
+        // Révéler les images au redimensionnement de la fenêtre
+        window.addEventListener('resize', function() {
+            revealImages();
+        });
+
+        // Exécuter immédiatement au cas où le DOM est déjà chargé
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(revealImages, 100);
+        } else {
+            document.addEventListener('DOMContentLoaded', revealImages);
+        }
+    </script>
+</body>
+</html>

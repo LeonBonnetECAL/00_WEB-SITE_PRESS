@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Révélation d'images au scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: rgb(255, 255, 255);
+            min-height: 100vh;
+        }
+
+        /* Zone fixe pour l'affichage des images */
+        .image-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            max-width: 90vw;
+            z-index: 10;
+        }
+
+        .image-wrapper {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .image-wrapper.active {
+            opacity: 1;
+        }
+
+        .image-wrapper img {
+            width: 800px;
+            max-width: 90vw;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .image-caption {
+            padding: 20px;
+            text-align: left;
+            font-size: 1.5em;
+            color: #000000;
+            font-weight: 600;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        /* Sections invisibles pour le scroll */
+        .scroll-section {
+            height: 100vh;
+            position: relative;
+        }
+
+        .spacer {
+            height: 50vh;
+        }
+
+        @media (max-width: 768px) {
+            .image-display {
+                width: 95vw;
+            }
+
+            .image-wrapper img {
+                height: 300px;
+            }
+
+            .image-caption {
+                font-size: 1.2em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Zone d'affichage fixe centrée -->
+    <div class="image-display">
+        <div class="image-wrapper" data-index="0">
+            <div class="image-caption">Lia ⚆</div>
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 2.jpg" alt="Image 1">
+        </div>
+        
+        <div class="image-wrapper" data-index="1">
+            <div class="image-caption">Lia ⚆</div>
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 3.jpg" alt="Image 2">
+        </div>
+        
+        <div class="image-wrapper" data-index="2">
+            <div class="image-caption">Mr.P ⚉</div>
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 4.jpg" alt="Image 3">
+        </div>
+
+        <div class="image-wrapper" data-index="3">
+            <div class="image-caption">Lia ⚆</div>
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie 5.jpg" alt="Image 4">
+        </div>
+        
+        <div class="image-wrapper" data-index="4">
+            <div class="image-caption">Hugo ⚈</div>
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1 copie.jpg" alt="Image 5">
+        </div>
+        
+        <div class="image-wrapper" data-index="5">
+            <div class="image-caption">Lia ⚆</div>
+            <img src="/Users/maxime/Desktop/Autres/écal_2/Web/Template/web-template-v9/images/DIALOGUE_001_Plan de travail 1.jpg" alt="Image 6">
+        </div>
+    </div>
+
+    <!-- Sections de scroll invisibles -->
+    <div class="scroll-section" data-image="0"></div>
+    <div class="scroll-section" data-image="1"></div>
+    <div class="scroll-section" data-image="2"></div>
+    <div class="scroll-section" data-image="3"></div>
+    <div class="scroll-section" data-image="4"></div>
+    <div class="scroll-section" data-image="5"></div>
+
+    <div class="spacer"></div>
+
+    <script>
+        const images = document.querySelectorAll('.image-wrapper');
+        const sections = document.querySelectorAll('.scroll-section');
+        let currentImageIndex = -1;
+
+        function updateImages() {
+            const windowHeight = window.innerHeight;
+            let activeIndex = -1;
+
+            // Déterminer quelle section est visible
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                const sectionMiddle = rect.top + rect.height / 2;
+                
+                // Si le milieu de la section est proche du centre de l'écran
+                if (sectionMiddle > 0 && sectionMiddle < windowHeight) {
+                    activeIndex = index;
+                }
+            });
+
+            // Mettre à jour l'affichage si l'image active a changé
+            if (activeIndex !== currentImageIndex) {
+                images.forEach((img, index) => {
+                    if (index === activeIndex) {
+                        img.classList.add('active');
+                    } else {
+                        img.classList.remove('active');
+                    }
+                });
+                currentImageIndex = activeIndex;
+            }
+        }
+
+        // Écouter l'événement de scroll
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            if (scrollTimeout) {
+                window.cancelAnimationFrame(scrollTimeout);
+            }
+            scrollTimeout = window.requestAnimationFrame(updateImages);
+        });
+
+        // Initialiser au chargement
+        window.addEventListener('load', updateImages);
+        
+        // Exécuter immédiatement
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(updateImages, 100);
+        } else {
+            document.addEventListener('DOMContentLoaded', updateImages);
+        }
+    </script>
+</body>
+</html>
